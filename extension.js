@@ -53,24 +53,29 @@ function activate(context) {
     })
 
     // Reduce commands to commands with valid conditions
-    reducedCommands = reducedCommands.reduce((accumulatedCommands, currentCommand) => {
-			const isValid = currentCommand.conditions.every(condition => {
-				const workspaceConfiguration = vscode.workspace.getConfiguration().get(condition.configuration)
+    reducedCommands = reducedCommands.reduce(
+      (accumulatedCommands, currentCommand) => {
+        const isValid = currentCommand.conditions.every(condition => {
+          const workspaceConfiguration = vscode.workspace
+            .getConfiguration()
+            .get(condition.configuration)
 
-				if (workspaceConfiguration === undefined) {
-					console.error('Invalid configuration')
-				}
+          if (workspaceConfiguration === undefined) {
+            console.error('Invalid configuration')
+          }
 
-				// FIXME: Add object type comparison as well
-				return workspaceConfiguration === condition.value
-			})
+          // FIXME: Add object type comparison as well
+          return workspaceConfiguration === condition.value
+        })
 
-			if (isValid) {
-				accumulatedCommands.push(currentCommand.command)
-			}
+        if (isValid) {
+          accumulatedCommands.push(currentCommand.command)
+        }
 
-			return accumulatedCommands
-    }, [])
+        return accumulatedCommands
+      },
+      [],
+    )
 
     // Execute each command
     if (reducedCommands.length) {

@@ -1,6 +1,6 @@
 {
 	"name": "vscode-events",
-	"displayName": "Events",
+	"displayName": "VS Code Events",
 	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.33.0"

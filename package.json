@@ -2,6 +2,7 @@
 	"name": "vscode-events",
 	"displayName": "VS Code Events",
 	"description": "Execution of commands on events emitted by Visual Studio Code",
+	"preview": true,
 	"version": "0.1.0",
 	"engines": {
 		"vscode": "^1.33.0"
@@ -15,40 +16,12 @@
 	"contributes": {
 		"configuration": {
 			"type": "object",
-			"title": "Events",
+			"title": "VS Code Events",
 			"properties": {
 				"events.configurations": {
 					"type": "array",
-					"default": [
-						{
-							"event": "onDidStartDebugSession",
-							"commands": [
-								{
-									"command": "workbench.action.toggleStatusbarVisibility",
-									"conditions": [
-										{
-											"configuration": "workbench.statusBar.visible",
-											"value": false
-										}
-									]
-								}
-							]
-						},
-						{
-							"event": "onDidTerminateDebugSession",
-							"commands": [
-								{
-									"command": "workbench.action.toggleStatusbarVisibility",
-									"conditions": [
-										{
-											"configuration": "workbench.statusBar.visible",
-											"value": true
-										}
-									]
-								}
-							]
-						}
-					]
+					"default": [],
+					"description": "Specifies commands to be run conditionally when an event is emitted."
 				}
 			}
 		}

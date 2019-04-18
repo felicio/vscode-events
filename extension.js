@@ -15,6 +15,9 @@ function activate(context) {
 }
 
 function eventListener(event) {
+  // TODO: Copy JSON configuration and mutate properties
+  // FIXME: Validate entire JSON configuration schema
+  // Get last specified configuration
   let configurations = vscode.workspace
     .getConfiguration('events')
     .get('configurations')
@@ -35,39 +38,36 @@ function eventListener(event) {
     return // not found
   }
 
-  const lastConfiguration = configurations[configurations.length - 1]
+  const configuration = configurations[configurations.length - 1]
 
-  // Reduce commands to unique commands
-  let reducedCommands = lastConfiguration.commands.reduce(
-    (commands, currentCommand) => {
-      const index = commands.findIndex(
-        command => command.command === currentCommand.command,
-      )
+  // Get last specified unique commands
+  let commands = configuration.commands.reduce((commands, currentCommand) => {
+    const index = commands.findIndex(
+      command => command.command === currentCommand.command,
+    )
 
-      if (index >= 0) {
-        commands[index] = {
-          ...currentCommand,
-          conditions: currentCommand.conditions.map(condition => ({
-            ...condition,
-          })),
-        }
-      } else {
-        commands.push({
-          ...currentCommand,
-          conditions: currentCommand.conditions.map(condition => ({
-            ...condition,
-          })),
-        })
+    if (index >= 0) {
+      commands[index] = {
+        ...currentCommand,
+        conditions: currentCommand.conditions.map(condition => ({
+          ...condition,
+        })),
       }
+    } else {
+      commands.push({
+        ...currentCommand,
+        conditions: currentCommand.conditions.map(condition => ({
+          ...condition,
+        })),
+      })
+    }
 
-      return commands
-    },
-    [],
-  )
+    return commands
+  }, [])
 
-  // Reduce commands' conditions to unique conditions
-  reducedCommands = reducedCommands.map(reducedCommand => {
-    const command = reducedCommand.conditions.reduce(
+  // Get commands with last specified unique conditions
+  commands = commands.map(currentCommand => {
+    const command = currentCommand.conditions.reduce(
       (command, currentCondition) => {
         const index = command.conditions.findIndex(
           condition =>
@@ -82,21 +82,21 @@ function eventListener(event) {
 
         return command
       },
-      { ...reducedCommand, conditions: [] },
+      { ...currentCommand, conditions: [] },
     )
 
     return command
   })
 
-  // Reduce commands to commands with valid conditions
-  reducedCommands = reducedCommands.reduce((commands, currentCommand) => {
+  // Get commands with valid conditions (AND)
+  commands = commands.reduce((commands, currentCommand) => {
     const isValid = currentCommand.conditions.every(condition => {
       const configuration = vscode.workspace
         .getConfiguration()
         .get(condition.configuration)
 
       if (configuration === undefined) {
-        console.error('Invalid configuration')
+        return false // invalid configuration
       }
 
       return configuration === condition.value
@@ -109,10 +109,12 @@ function eventListener(event) {
     return commands
   }, [])
 
-  // Execute each command
-  if (reducedCommands.length) {
-    reducedCommands.forEach(command => {
-      vscode.commands.executeCommand(command)
+  // Try to xecute each command
+  if (commands.length) {
+    commands.forEach(command => {
+      vscode.commands
+        .executeCommand(command)
+        .then(() => undefined, error => console.error(error))
     })
   }
 }

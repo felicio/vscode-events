@@ -15,17 +15,30 @@ function activate(context) {
 }
 
 function eventListener(event) {
-  // Get event configuration
-  const configurations = vscode.workspace
+  let configurations = vscode.workspace
     .getConfiguration('events')
     .get('configurations')
-  const eventConfigurations = configurations.filter(
+
+  if (!Array.isArray(configurations)) {
+    return // not valid
+  }
+
+  if (!configurations.length) {
+    return // empty
+  }
+
+  configurations = configurations.filter(
     configuration => configuration.event === event,
   )
-  const configuration = eventConfigurations[eventConfigurations.length - 1]
+
+  if (!configurations.length) {
+    return // not found
+  }
+
+  const lastConfiguration = configurations[configurations.length - 1]
 
   // Reduce commands to unique commands
-  let reducedCommands = configuration.commands.reduce(
+  let reducedCommands = lastConfiguration.commands.reduce(
     (commands, currentCommand) => {
       const index = commands.findIndex(
         command => command.command === currentCommand.command,

@@ -1,6 +1,6 @@
 {
 	"name": "vscode-events",
-	"displayName": "VS Code Events",
+	"displayName": "Events",
 	"description": "Execution of commands on events emitted by Visual Studio Code",
 	"repository": {
 		"type": "git",

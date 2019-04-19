@@ -1,16 +1,15 @@
 const vscode = require('vscode')
 
 function activate(context) {
-  const startedDebugSessionListener = vscode.debug.onDidStartDebugSession(() =>
-    eventListener('onDidStartDebugSession'),
+  vscode.debug.onDidStartDebugSession(
+    () => eventListener('onDidStartDebugSession'),
+    undefined,
+    context.subscriptions,
   )
-  const terminatedDebugSessionListener = vscode.debug.onDidTerminateDebugSession(
+  vscode.debug.onDidTerminateDebugSession(
     () => eventListener('onDidTerminateDebugSession'),
-  )
-
-  context.subscriptions.push(
-    startedDebugSessionListener,
-    terminatedDebugSessionListener,
+    undefined,
+    context.subscriptions,
   )
 }
 

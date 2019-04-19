@@ -6,6 +6,7 @@
 		"type": "git",
 		"url": "https://github.com/felicio/vscode-events.git"
 	},
+	"publisher": "felicio",
 	"preview": true,
 	"version": "0.1.0",
 	"engines": {

@@ -30,7 +30,7 @@
 	"activationEvents": [
 		"*"
 	],
-	"qna": "false",
+	"qna": false,
 	"contributes": {
 		"configuration": {
 			"type": "object",
